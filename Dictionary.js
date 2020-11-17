@@ -20,17 +20,27 @@ function fix(str) {
     /*
         Fixes the following sentence issues:
          - Capitalization at the beginning of sentences.
-             - TODO (even when quoted or multiples).
+             - (even when quoted or multiples).
          - TODO: Fixes a/an disagreement.
     */
 
-    // Capitalize first alphabetic character of the string.
-    if (/^[A-Z]$/i.test(str.charAt(0))) {
+    // Capitalize first alphabetic character of the string. (Not including HTML codes)
+	if (str.startsWith("&quot;")) {
+		str = str.slice(0, 6) + str.slice(6, 7).toUpperCase() + str.slice(7);
+	} else if (/^[A-Z]$/i.test(str.charAt(0))) {
         str = str.slice(0, 1).toUpperCase() + str.slice(1);
     } else {
         str = str.slice(0, 1) + str.slice(1, 2).toUpperCase() + str.slice(2);
     }
-
+	
+	// Capitalize first alphabetic character of new sentences within line.
+	for (const punc of ["&quot;", ". ", "! ", "? "]) {
+		if (str.includes(punc)) {
+			let i = str.indexOf(punc) + punc.length;
+			str = str.slice(0, i) + str.slice(i, i + 1).toUpperCase() + str.slice(i + 1);
+		}
+	}
+	
     return str;
 }
 
